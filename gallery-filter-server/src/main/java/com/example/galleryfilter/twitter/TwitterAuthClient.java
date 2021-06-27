@@ -1,18 +1,18 @@
 package com.example.galleryfilter.twitter;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import io.github.redouane59.twitter.dto.others.RequestToken;
-import io.github.redouane59.twitter.helpers.AbstractRequestHelper;
-import io.github.redouane59.twitter.signature.TwitterCredentials;
+import com.github.scribejava.apis.TwitterApi;
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.model.OAuth1AccessToken;
+import com.github.scribejava.core.model.OAuth1RequestToken;
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.oauth.OAuth10aService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.client.RestTemplate;
+
+import io.github.redouane59.twitter.signature.TwitterCredentials;
 
 public class TwitterAuthClient {
     private static String twitterAuthUrl = "https://twitter.com/oauth";
@@ -25,83 +25,55 @@ public class TwitterAuthClient {
     @Value("${twitter.apisecret}")
     private String apiSecret;
 
-    private String oauthToken;
-    private RequestToken requestToken;
+    private OAuth10aService service;
+    private OAuth1RequestToken requestToken;
 
-    @Value("${twitter.accesstoken}")
-    private String accessToken;
-    @Value("${twitter.accesstokensecret}")
-    private String accessTokenSecret;
+    private OAuth1AccessToken accessToken;
 
     private TwitterClient twitterClient;
 
-    private TwitterClient commonTwitterClient;
-
-    @Autowired
-    RestTemplate restTemplate;
-
     @PostConstruct
     public void init(){
-        TwitterCredentials cred = new TwitterCredentials();
-        cred.setApiKey(apiKey);
-        cred.setApiSecretKey(apiSecret);
-        cred.setAccessToken(accessToken);
-        cred.setAccessTokenSecret(accessTokenSecret);
-
-        commonTwitterClient = new TwitterClient(cred);
+        service = new ServiceBuilder(apiKey)
+            .apiSecret(apiSecret)
+            .callback("http://localhost:8080/api/v1/auth")
+            .build(TwitterApi.instance());
     }
 
     public String requestReqToken() {
-        // Map<String, String> map = new HashMap<>();
-        // map.put("oauth_callback", "http://localhost:8080/auth");
-
-        // var response = restTemplate.postForObject(requestTokenUrl, map, JsonNode.class);
-        // oauthToken = response.get("oauth_token").asText();
-
-        // return authenticateUrl + oauthToken;
-        var token = commonTwitterClient.getOauth1Token("http://localhost:8080/api/v1/auth");
-        oauthToken = token.getOauthToken();
-        requestToken = token;
-        return authenticateUrl + oauthToken;
+        try {
+            var token = service.getRequestToken();
+            return service.getAuthorizationUrl(token);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public TwitterClient requestAccessToken(String oauthToken, String verifier) {
-        Map<String, String> map = new HashMap<>();
-        // map.put("oauth_consumer_key", apiKey);
-        // map.put("oauth_token", oauthToken);
-        // map.put("oauth_verifier", verifier);
+        try {
+            accessToken = service.getAccessToken(requestToken, verifier);
 
-        // var response = restTemplate.postForObject(accessTokenUrl, map, JsonNode.class);
-        // accessToken = response.get("oauth_token").asText();
-        // accessTokenSecret = response.get("oauth_token_secret").asText();
-        //requestToken.setOauthToken(oauthToken);
-        // var accessToken = commonTwitterClient.getOAuth1AccessToken(requestToken, verifier);
+            var cred = new TwitterCredentials(apiKey, apiSecret, accessToken.getToken(), accessToken.getTokenSecret());
 
-        TwitterCredentials precred = new TwitterCredentials();
-        precred.setApiKey(apiKey);
-        precred.setApiSecretKey(apiSecret);
-        precred.setAccessToken(requestToken.getOauthToken());
-        precred.setAccessTokenSecret(requestToken.getOauthTokenSecret());
-
-        var pretwitterClient = new TwitterClient(precred);
-
-        var accessToken = pretwitterClient.getOAuth1AccessToken(requestToken, verifier);
-
-        this.accessToken = accessToken.getOauthToken();
-        this.accessTokenSecret = accessToken.getOauthTokenSecret();
-
-        TwitterCredentials cred = new TwitterCredentials();
-        cred.setApiKey(apiKey);
-        cred.setApiSecretKey(apiSecret);
-        cred.setAccessToken(this.accessToken);
-        cred.setAccessTokenSecret(accessTokenSecret);
-
-        twitterClient = new TwitterClient(cred);
-
-        return twitterClient;
+            twitterClient = new TwitterClient(cred);
+            return twitterClient;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        
     }
 
     public TwitterClient getTwitterClient(){
         return twitterClient;
+    }
+
+    public Response executeRequest(OAuthRequest request){
+        service.signRequest(accessToken, request);
+        try {
+            return service.execute(request);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        
     }
 }
