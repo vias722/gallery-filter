@@ -1,3 +1,2 @@
-server:
-  servlet:
-    context-path: /api/v1
+app:
+    engine-location: http://localhost:5000/

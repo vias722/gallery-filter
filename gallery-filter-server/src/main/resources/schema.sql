@@ -1,5 +1,0 @@
-CREATE TABLE USER (
-    username VARCHAR(30) PRIMARY KEY,
-    password VARCHAR(30) NOT NULL,
-    enabled BOOLEAN NOT NULL
-);

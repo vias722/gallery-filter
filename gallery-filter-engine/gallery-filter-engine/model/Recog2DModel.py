@@ -65,22 +65,43 @@ class RecogModel:
         result = self.model.forward(img.view(1,3,256,256))[0]
         return result
 
+    def detectImages(self, files):
+        imgs = []
+        for file in files:
+            file = str(file)
+            imgs.append(torch.tensor(self.readPicture(file)))
+        
+        imgs_tensor = torch.stack(imgs, 0)
+
+        result = self.model.forward(imgs_tensor)
+        return result
+
     def recognize(self, images):
         # images = pathlib.Path(path).glob('*')
         list = []
         result_list = []
         count = 0
-        for image in images:
-            count += 1
-            #list.append(image)
-            result = self.detectImage(image)
+        # for image in images:
+        #     #list.append(image)
+        #     result = self.detectImage(image)
+        #     hash = {}
+        #     hash['url'] = image
+        #     # if result != None:
+        #     #     result_list.append(image)
+        #     hash['result'] =  '2d' if result[0]<result[1] else '3d'
+        #     result_list.append(hash)
+
+        print('detecting')
+        for result in self.detectImages(images):
+            
             hash = {}
-            hash['url'] = image
+            hash['url'] = images[count]
             # if result != None:
             #     result_list.append(image)
-            # if count % 100 == 0:
-            #     print(count)
             hash['result'] =  '2d' if result[0]<result[1] else '3d'
             result_list.append(hash)
+            count += 1
+
+        print('finish')
         return result_list
 
