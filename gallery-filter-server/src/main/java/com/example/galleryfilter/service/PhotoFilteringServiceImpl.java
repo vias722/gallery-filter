@@ -25,7 +25,7 @@ public class PhotoFilteringServiceImpl implements PhotoFilteringService{
     String engineUrl;
 
     /**
-     * 
+     * {@inheritDoc}
      */
     @Override
     public FilteredTweets filteringTweets(ArrayNode tweets) {
@@ -74,7 +74,12 @@ public class PhotoFilteringServiceImpl implements PhotoFilteringService{
 
         return new FilteredTweets(list2d, list3d);
     }
-
+    /**
+     * 
+     * @param tweet
+     * @param url
+     * @return
+     */
     private boolean checkTweetContainsImageUrl(JsonNode tweet, String url){
         for (JsonNode media : tweet.get("extended_entities").get("media")) {
             if (url.equals(media.get("media_url").asText() + "?name=small")){
