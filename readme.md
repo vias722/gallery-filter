@@ -11,7 +11,7 @@ Gallery-Filterはタイムライン/リストからイラストツイートの�
 * poetry
 * docker, docker-compose
 
-# 環境変数について
+## 環境変数について
 TWITTER_API_KEY / TWITTER_API_SECRET それぞれをTwitterから取得した値で埋めてください。
 localからの実行及びコンテナのビルドでその値を参照しています。
 
@@ -24,7 +24,7 @@ SpringBootによるフロント側のWebアプリです。
 
 ### gallery-filter-client
 Vue.jsによるGallery-Filterのフロント画面です。
-起動時のポートは8081であり、gallery-filter-serverが8080で起動している場合、プロキシ機能によってそちらと連携することが出来ます。
+起動時のポートは8081であり、gallery-filter-serverが8080で起動している場合、`yarn serve` で起動するとプロキシ機能によってそちらと連携することが出来ます。
 
 yarn buildを実施すると、gallery-filter-serverの/src/resources/static配下に成果物が配置されます。
 
