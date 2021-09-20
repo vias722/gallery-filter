@@ -1,0 +1,1 @@
+from .Recog2DModel import RecogModel

@@ -1,11 +1,11 @@
 import json
-from model import Recog2DModel
+from . import model
 
 from flask import Flask, request, jsonify
 
 
 app = Flask(__name__)
-model = Recog2DModel.RecogModel()
+model = model.RecogModel()
 
 
 
