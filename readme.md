@@ -1,6 +1,8 @@
 # Gallery-Filter
 
 Gallery-Filterはタイムライン/リストからイラストツイートのみ/写真ツイートのみを抽出できるウェブアプリです。
+実行にはTwitterのAPIKey / APISecretが必要です。
+(プロジェクト内には記載がありません)
 
 ## 必要環境
 * jdk 11
@@ -9,6 +11,9 @@ Gallery-Filterはタイムライン/リストからイラストツイートの�
 * poetry
 * docker, docker-compose
 
+# 環境変数について
+TWITTER_API_KEY / TWITTER_API_SECRET それぞれをTwitterから取得した値で埋めてください。
+localからの実行及びコンテナのビルドでその値を参照しています。
 
 ## プロジェクト構成
 ### gallery-filter-server
@@ -30,7 +35,7 @@ pytorchによって学習させたAIのモデルを含んでいます。
 なお、モデルの学習データとしては、イラストはPixivの東方タグのもの、写真はflickrのjapanタグのものを用いました。
 
 ## ビルド方法
-各プロジェクトの階層に移動し以下のコマンドを実行した後、最後に記述してあるコマンドを実行してください。
+各プロジェクトの階層に移動し以下のコマンドを実行した後、最後に記述してある手順を実施してください。
 ### gallery-filter-client
 ```
 $ yarn build
