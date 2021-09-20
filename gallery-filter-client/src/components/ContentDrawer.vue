@@ -1,5 +1,5 @@
 <template>
-<v-navigation-drawer app clipped dark>
+<v-navigation-drawer app clipped dark :value="value" v-on:input="$emit('input', $event)">
     <v-list >
         <v-list-item-group mandatory >
             <v-list-item selectable to="/">
@@ -49,6 +49,7 @@ import Axios from 'axios'
 import store from "../plugins/store"
 
 export default {
+    props: ['value'],
     data: function (){
         return {
             store: store,

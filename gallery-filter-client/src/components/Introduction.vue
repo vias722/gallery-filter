@@ -25,7 +25,7 @@
         </v-row>
       </v-col>
 
-      <v-col class="mb-5" cols="12">
+      <!-- <v-col class="mb-5" cols="12">
         <h2 class="headline font-weight-bold mb-5">今後の改善事項(すぐ実装方針が定まるもの)</h2>
 
         <v-row justify="center">
@@ -38,7 +38,7 @@
               </ul>
           </div>
         </v-row>
-      </v-col>
+      </v-col> -->
     </v-row>
   </v-container>
 </template>

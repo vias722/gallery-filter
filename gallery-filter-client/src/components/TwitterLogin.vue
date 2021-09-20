@@ -25,6 +25,8 @@ export default {
         Axios.get("auth/user")
             .then((res)=>{
                 store.user = res.data
+            }).catch(()=>{
+                store.user = null
             })
     }
 }

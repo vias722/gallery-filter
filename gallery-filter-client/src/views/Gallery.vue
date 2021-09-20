@@ -73,6 +73,7 @@
 </template>
 <script>
 import Axios from 'axios'
+import store from '../plugins/store'
 import ImageCard from '../components/ImageCard.vue'
 
 export default {
@@ -85,12 +86,21 @@ export default {
             filterType: 0,
             tweets2d: [],
             tweets3d: [],
-            onRefresh: false
+            onRefresh: false,
+            store: store
         }
     },
     watch: {
         id: function () {
             this.refresh()
+        },
+        store: {
+            deep: true,
+            handler: function(store){
+                if(store.user===null) this.$router.push('/')
+
+                this.refresh()
+            }
         }
     },
     mounted: function () {
@@ -98,6 +108,8 @@ export default {
     },
     methods: {
         refresh: function() {
+            if(this.store.user === null) this.$router.push('/')
+            else if (this.store.user === undefined) return
             this.onRefresh = true
             const url = this.id == "timeline" ? `tweet` : `tweet/list/${this.id}`
             const id = this.id
