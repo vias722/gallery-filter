@@ -47,12 +47,11 @@
                         <v-icon class="mr-1">
                             mdi-twitter-retweet
                         </v-icon>
-                        <span class="subheading">{{getOriginal(item).retweet_count}}</span>
+                        <span class="subheading mr-2">{{getOriginal(item).retweet_count}}</span>
                         <v-icon class="mr-1">
                             mdi-heart
                         </v-icon>
                         <span class="subheading mr-2">{{getOriginal(item).favorite_count}}</span>
-                        <span class="mr-1">·</span>
                         
                         </v-row>
                     </v-list-item>
